@@ -1,0 +1,2 @@
+import { defineConfig } from '@playwright/test';
+export default defineConfig({testDir:'./e2e',timeout:60000,workers:1,use:{baseURL:'http://localhost:5174',headless:true,launchOptions:{executablePath:process.env.BROWSER_PATH || 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe',args:['--host-resolver-rules=MAP localhost 127.0.0.1']},screenshot:'only-on-failure',trace:'retain-on-failure'},reporter:'list',outputDir:'.runtime/playwright-results'});

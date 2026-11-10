@@ -1,0 +1,6434 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "AURIE Store API",
+    "version": "1.0.0",
+    "description": "Use Authorize and enter web for AppClient before mutations. Customer/admin login sets HttpOnly session cookies. Guest access uses private tokens in headers. Amounts are integer RWF. Payments remain unavailable until merchant credentials are configured."
+  },
+  "components": {
+    "securitySchemes": {
+      "AppClient": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Aurie-Client"
+      },
+      "CustomerSession": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "aurie_customer"
+      },
+      "AdminSession": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "aurie_admin"
+      }
+    },
+    "schemas": {
+      "def-0": {
+        "type": "object",
+        "required": [
+          "name",
+          "category",
+          "subcategory",
+          "price",
+          "description",
+          "sizes",
+          "colors",
+          "stock",
+          "sku",
+          "gender",
+          "is_featured",
+          "is_new_arrival",
+          "id",
+          "version",
+          "created_at",
+          "updated_at"
+        ],
+        "properties": {
+          "name": {
+            "minLength": 1,
+            "maxLength": 180,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "tagline": {
+            "minLength": 0,
+            "maxLength": 300,
+            "type": "string"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "Men",
+              "Women",
+              "Unisex",
+              "Culture"
+            ]
+          },
+          "subcategory": {
+            "minLength": 1,
+            "maxLength": 100,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "price": {
+            "minimum": 0,
+            "maximum": 1000000000,
+            "type": "integer"
+          },
+          "image_url": {
+            "minLength": 0,
+            "maxLength": 2000,
+            "type": "string"
+          },
+          "description": {
+            "minLength": 1,
+            "maxLength": 10000,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "materials": {
+            "minLength": 0,
+            "maxLength": 2000,
+            "type": "string"
+          },
+          "sizes": {
+            "minItems": 1,
+            "maxItems": 30,
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "minLength": 1,
+              "maxLength": 100,
+              "pattern": "\\S",
+              "type": "string"
+            }
+          },
+          "colors": {
+            "minItems": 1,
+            "maxItems": 30,
+            "type": "array",
+            "items": {
+              "additionalProperties": false,
+              "type": "object",
+              "required": [
+                "name",
+                "hex"
+              ],
+              "properties": {
+                "name": {
+                  "minLength": 1,
+                  "maxLength": 100,
+                  "pattern": "\\S",
+                  "type": "string"
+                },
+                "hex": {
+                  "pattern": "^#[0-9a-fA-F]{6}$",
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "stock": {
+            "minimum": 0,
+            "maximum": 1000000,
+            "type": "integer"
+          },
+          "sku": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,99}$",
+            "type": "string"
+          },
+          "gender": {
+            "type": "string",
+            "enum": [
+              "men",
+              "women",
+              "unisex"
+            ]
+          },
+          "is_featured": {
+            "type": "boolean"
+          },
+          "is_new_arrival": {
+            "type": "boolean"
+          },
+          "id": {
+            "minLength": 1,
+            "maxLength": 100,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "version": {
+            "minimum": 0,
+            "maximum": 1000000000,
+            "type": "integer"
+          },
+          "created_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "title": "Product"
+      },
+      "def-1": {
+        "type": "object",
+        "required": [
+          "customer_name",
+          "customer_email",
+          "customer_phone",
+          "delivery_province",
+          "delivery_district",
+          "delivery_sector",
+          "delivery_street",
+          "id",
+          "order_number",
+          "items",
+          "subtotal",
+          "delivery_fee",
+          "total",
+          "currency",
+          "status",
+          "payment_status",
+          "payment_method",
+          "transaction_reference",
+          "created_at",
+          "updated_at",
+          "version",
+          "reservation_expires_at",
+          "reservation_state",
+          "review_required",
+          "environment",
+          "timeline"
+        ],
+        "properties": {
+          "customer_name": {
+            "minLength": 1,
+            "maxLength": 180,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "customer_email": {
+            "format": "email",
+            "maxLength": 254,
+            "type": "string"
+          },
+          "customer_phone": {
+            "pattern": "^\\+?[0-9 ()-]{7,25}$",
+            "type": "string"
+          },
+          "delivery_province": {
+            "type": "string",
+            "enum": [
+              "Kigali",
+              "Northern",
+              "Southern",
+              "Eastern",
+              "Western"
+            ]
+          },
+          "delivery_district": {
+            "minLength": 1,
+            "maxLength": 100,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "delivery_sector": {
+            "minLength": 1,
+            "maxLength": 200,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "delivery_street": {
+            "minLength": 1,
+            "maxLength": 500,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "delivery_notes": {
+            "minLength": 0,
+            "maxLength": 2000,
+            "type": "string"
+          },
+          "id": {
+            "minLength": 1,
+            "maxLength": 100,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "order_number": {
+            "minLength": 1,
+            "maxLength": 200,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "additionalProperties": false,
+              "type": "object",
+              "required": [
+                "product_id",
+                "product_name",
+                "product_image",
+                "size",
+                "color",
+                "quantity",
+                "price"
+              ],
+              "properties": {
+                "product_id": {
+                  "minLength": 1,
+                  "maxLength": 100,
+                  "pattern": "\\S",
+                  "type": "string"
+                },
+                "product_name": {
+                  "minLength": 1,
+                  "maxLength": 200,
+                  "pattern": "\\S",
+                  "type": "string"
+                },
+                "product_image": {
+                  "minLength": 0,
+                  "maxLength": 2000,
+                  "type": "string"
+                },
+                "size": {
+                  "minLength": 1,
+                  "maxLength": 100,
+                  "pattern": "\\S",
+                  "type": "string"
+                },
+                "color": {
+                  "minLength": 1,
+                  "maxLength": 100,
+                  "pattern": "\\S",
+                  "type": "string"
+                },
+                "quantity": {
+                  "minimum": 0,
+                  "maximum": 99,
+                  "type": "integer"
+                },
+                "price": {
+                  "minimum": 0,
+                  "maximum": 1000000000,
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "subtotal": {
+            "minimum": 0,
+            "maximum": 1000000000000000,
+            "type": "integer"
+          },
+          "delivery_fee": {
+            "minimum": 0,
+            "maximum": 1000000000,
+            "type": "integer"
+          },
+          "total": {
+            "minimum": 0,
+            "maximum": 1000000000000000,
+            "type": "integer"
+          },
+          "currency": {
+            "type": "string",
+            "enum": [
+              "RWF"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "CONFIRMED",
+              "PROCESSING",
+              "SHIPPED",
+              "DELIVERED",
+              "CANCELLED"
+            ]
+          },
+          "payment_status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "SUCCESSFUL",
+              "FAILED",
+              "REFUNDED"
+            ]
+          },
+          "payment_method": {
+            "minLength": 0,
+            "maxLength": 100,
+            "type": "string"
+          },
+          "transaction_reference": {
+            "minLength": 0,
+            "maxLength": 200,
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "version": {
+            "minimum": 0,
+            "maximum": 1000000000,
+            "type": "integer"
+          },
+          "reservation_expires_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "reservation_state": {
+            "minLength": 1,
+            "maxLength": 200,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "review_required": {
+            "type": "boolean"
+          },
+          "environment": {
+            "minLength": 1,
+            "maxLength": 200,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "timeline": {
+            "type": "array",
+            "items": {
+              "additionalProperties": false,
+              "type": "object",
+              "required": [
+                "status",
+                "timestamp",
+                "title",
+                "description"
+              ],
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "PENDING",
+                    "CONFIRMED",
+                    "PROCESSING",
+                    "SHIPPED",
+                    "DELIVERED",
+                    "CANCELLED"
+                  ]
+                },
+                "timestamp": {
+                  "format": "date-time",
+                  "type": "string"
+                },
+                "title": {
+                  "minLength": 1,
+                  "maxLength": 200,
+                  "pattern": "\\S",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 0,
+                  "maxLength": 2000,
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "title": "Order"
+      },
+      "def-2": {
+        "type": "object",
+        "required": [
+          "cart",
+          "wishlist",
+          "shopping_version",
+          "issues"
+        ],
+        "properties": {
+          "cart": {
+            "type": "array",
+            "items": {
+              "additionalProperties": false,
+              "type": "object",
+              "required": [
+                "product",
+                "selectedSize",
+                "selectedColor",
+                "quantity"
+              ],
+              "properties": {
+                "product": {
+                  "$ref": "#/components/schemas/def-0"
+                },
+                "selectedSize": {
+                  "minLength": 1,
+                  "maxLength": 100,
+                  "pattern": "\\S",
+                  "type": "string"
+                },
+                "selectedColor": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "name",
+                    "hex"
+                  ],
+                  "properties": {
+                    "name": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "hex": {
+                      "pattern": "^#[0-9a-fA-F]{6}$",
+                      "type": "string"
+                    }
+                  }
+                },
+                "quantity": {
+                  "minimum": 0,
+                  "maximum": 99,
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "wishlist": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/def-0"
+            }
+          },
+          "shopping_version": {
+            "minimum": 0,
+            "maximum": 1000000000,
+            "type": "integer"
+          },
+          "issues": {
+            "type": "array",
+            "items": {
+              "minLength": 1,
+              "maxLength": 2000,
+              "pattern": "\\S",
+              "type": "string"
+            }
+          }
+        },
+        "title": "Shopping"
+      },
+      "def-3": {
+        "type": "object",
+        "required": [
+          "cart",
+          "wishlist",
+          "shopping_version",
+          "issues",
+          "customer",
+          "orders"
+        ],
+        "properties": {
+          "cart": {
+            "type": "array",
+            "items": {
+              "additionalProperties": false,
+              "type": "object",
+              "required": [
+                "product",
+                "selectedSize",
+                "selectedColor",
+                "quantity"
+              ],
+              "properties": {
+                "product": {
+                  "$ref": "#/components/schemas/def-0"
+                },
+                "selectedSize": {
+                  "minLength": 1,
+                  "maxLength": 100,
+                  "pattern": "\\S",
+                  "type": "string"
+                },
+                "selectedColor": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "name",
+                    "hex"
+                  ],
+                  "properties": {
+                    "name": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "hex": {
+                      "pattern": "^#[0-9a-fA-F]{6}$",
+                      "type": "string"
+                    }
+                  }
+                },
+                "quantity": {
+                  "minimum": 0,
+                  "maximum": 99,
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "wishlist": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/def-0"
+            }
+          },
+          "shopping_version": {
+            "minimum": 0,
+            "maximum": 1000000000,
+            "type": "integer"
+          },
+          "issues": {
+            "type": "array",
+            "items": {
+              "minLength": 1,
+              "maxLength": 2000,
+              "pattern": "\\S",
+              "type": "string"
+            }
+          },
+          "customer": {
+            "additionalProperties": false,
+            "type": "object",
+            "required": [
+              "id",
+              "name",
+              "email"
+            ],
+            "properties": {
+              "id": {
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "\\S",
+                "type": "string"
+              },
+              "name": {
+                "minLength": 1,
+                "maxLength": 180,
+                "pattern": "\\S",
+                "type": "string"
+              },
+              "email": {
+                "minLength": 1,
+                "maxLength": 254,
+                "pattern": "\\S",
+                "type": "string"
+              }
+            }
+          },
+          "orders": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/def-1"
+            }
+          }
+        },
+        "title": "Account"
+      },
+      "def-4": {
+        "type": "object",
+        "required": [
+          "id",
+          "request_number",
+          "full_name",
+          "phone",
+          "clothing_type",
+          "preferred_color",
+          "occasion",
+          "preferred_deadline",
+          "status",
+          "notes",
+          "estimated_price",
+          "version",
+          "created_at",
+          "updated_at",
+          "media_id",
+          "history",
+          "deadline_is_confirmed"
+        ],
+        "properties": {
+          "id": {
+            "minLength": 1,
+            "maxLength": 100,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "request_number": {
+            "minLength": 1,
+            "maxLength": 200,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "full_name": {
+            "minLength": 1,
+            "maxLength": 180,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "phone": {
+            "minLength": 1,
+            "maxLength": 30,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "clothing_type": {
+            "minLength": 1,
+            "maxLength": 200,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "preferred_color": {
+            "minLength": 1,
+            "maxLength": 300,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "occasion": {
+            "minLength": 0,
+            "maxLength": 1000,
+            "type": "string"
+          },
+          "preferred_deadline": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "NEW",
+              "CONTACTED",
+              "DESIGNING",
+              "APPROVED",
+              "IN PRODUCTION",
+              "READY",
+              "COMPLETED",
+              "CANCELLED"
+            ]
+          },
+          "notes": {
+            "minLength": 0,
+            "maxLength": 4000,
+            "type": "string"
+          },
+          "estimated_price": {
+            "minimum": 0,
+            "maximum": 1000000000,
+            "type": "integer",
+            "nullable": true
+          },
+          "version": {
+            "minimum": 0,
+            "maximum": 1000000000,
+            "type": "integer"
+          },
+          "created_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "media_id": {
+            "minLength": 1,
+            "maxLength": 100,
+            "pattern": "\\S",
+            "type": "string",
+            "nullable": true
+          },
+          "history": {
+            "type": "array",
+            "items": {
+              "additionalProperties": false,
+              "type": "object",
+              "required": [
+                "status",
+                "timestamp",
+                "notes"
+              ],
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "NEW",
+                    "CONTACTED",
+                    "DESIGNING",
+                    "APPROVED",
+                    "IN PRODUCTION",
+                    "READY",
+                    "COMPLETED",
+                    "CANCELLED"
+                  ]
+                },
+                "timestamp": {
+                  "format": "date-time",
+                  "type": "string"
+                },
+                "notes": {
+                  "minLength": 0,
+                  "maxLength": 4000,
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "deadline_is_confirmed": {
+            "type": "boolean",
+            "enum": [
+              false
+            ]
+          }
+        },
+        "title": "Tracking"
+      },
+      "def-5": {
+        "type": "object",
+        "required": [
+          "id",
+          "request_number",
+          "full_name",
+          "phone",
+          "clothing_type",
+          "preferred_color",
+          "occasion",
+          "preferred_deadline",
+          "status",
+          "notes",
+          "estimated_price",
+          "version",
+          "created_at",
+          "updated_at",
+          "media_id",
+          "history",
+          "deadline_is_confirmed",
+          "email",
+          "gender",
+          "measurements",
+          "description",
+          "internal_notes"
+        ],
+        "properties": {
+          "id": {
+            "minLength": 1,
+            "maxLength": 100,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "request_number": {
+            "minLength": 1,
+            "maxLength": 200,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "full_name": {
+            "minLength": 1,
+            "maxLength": 180,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "phone": {
+            "minLength": 1,
+            "maxLength": 30,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "clothing_type": {
+            "minLength": 1,
+            "maxLength": 200,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "preferred_color": {
+            "minLength": 1,
+            "maxLength": 300,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "occasion": {
+            "minLength": 0,
+            "maxLength": 1000,
+            "type": "string"
+          },
+          "preferred_deadline": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "NEW",
+              "CONTACTED",
+              "DESIGNING",
+              "APPROVED",
+              "IN PRODUCTION",
+              "READY",
+              "COMPLETED",
+              "CANCELLED"
+            ]
+          },
+          "notes": {
+            "minLength": 0,
+            "maxLength": 4000,
+            "type": "string"
+          },
+          "estimated_price": {
+            "minimum": 0,
+            "maximum": 1000000000,
+            "type": "integer",
+            "nullable": true
+          },
+          "version": {
+            "minimum": 0,
+            "maximum": 1000000000,
+            "type": "integer"
+          },
+          "created_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "media_id": {
+            "minLength": 1,
+            "maxLength": 100,
+            "pattern": "\\S",
+            "type": "string",
+            "nullable": true
+          },
+          "history": {
+            "type": "array",
+            "items": {
+              "additionalProperties": false,
+              "type": "object",
+              "required": [
+                "status",
+                "timestamp",
+                "notes"
+              ],
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "NEW",
+                    "CONTACTED",
+                    "DESIGNING",
+                    "APPROVED",
+                    "IN PRODUCTION",
+                    "READY",
+                    "COMPLETED",
+                    "CANCELLED"
+                  ]
+                },
+                "timestamp": {
+                  "format": "date-time",
+                  "type": "string"
+                },
+                "notes": {
+                  "minLength": 0,
+                  "maxLength": 4000,
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "deadline_is_confirmed": {
+            "type": "boolean",
+            "enum": [
+              false
+            ]
+          },
+          "email": {
+            "minLength": 1,
+            "maxLength": 254,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "gender": {
+            "minLength": 1,
+            "maxLength": 200,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "measurements": {
+            "minLength": 0,
+            "maxLength": 4000,
+            "type": "string"
+          },
+          "description": {
+            "minLength": 1,
+            "maxLength": 10000,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "internal_notes": {
+            "minLength": 0,
+            "maxLength": 4000,
+            "type": "string"
+          }
+        },
+        "title": "CustomRequest"
+      },
+      "def-6": {
+        "type": "object",
+        "required": [
+          "id",
+          "order_id",
+          "reference",
+          "provider_id",
+          "method",
+          "environment",
+          "amount",
+          "currency",
+          "status",
+          "checkout_url",
+          "verified_at",
+          "failure_code",
+          "created_at",
+          "updated_at"
+        ],
+        "properties": {
+          "id": {
+            "minLength": 1,
+            "maxLength": 100,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "order_id": {
+            "minLength": 1,
+            "maxLength": 100,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "reference": {
+            "minLength": 1,
+            "maxLength": 200,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "provider_id": {
+            "minLength": 1,
+            "maxLength": 200,
+            "pattern": "\\S",
+            "type": "string",
+            "nullable": true
+          },
+          "method": {
+            "minLength": 1,
+            "maxLength": 200,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "environment": {
+            "minLength": 1,
+            "maxLength": 200,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "amount": {
+            "minimum": 0,
+            "maximum": 1000000000000000,
+            "type": "integer"
+          },
+          "currency": {
+            "minLength": 1,
+            "maxLength": 200,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "status": {
+            "minLength": 1,
+            "maxLength": 200,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "checkout_url": {
+            "minLength": 1,
+            "maxLength": 2000,
+            "pattern": "\\S",
+            "type": "string",
+            "nullable": true
+          },
+          "verified_at": {
+            "format": "date-time",
+            "type": "string",
+            "nullable": true
+          },
+          "failure_code": {
+            "minLength": 1,
+            "maxLength": 200,
+            "pattern": "\\S",
+            "type": "string",
+            "nullable": true
+          },
+          "created_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "title": "Payment"
+      }
+    }
+  },
+  "paths": {
+    "/health/live": {
+      "get": {
+        "summary": "Process liveness",
+        "tags": [
+          "Operations"
+        ],
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "4XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health/ready": {
+      "get": {
+        "summary": "Database readiness",
+        "tags": [
+          "Operations"
+        ],
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "4XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/products": {
+      "get": {
+        "summary": "All published products",
+        "tags": [
+          "Catalogue"
+        ],
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/def-0"
+                  }
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a product",
+        "tags": [
+          "Catalogue"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "type": "object",
+                "required": [
+                  "name",
+                  "category",
+                  "subcategory",
+                  "price",
+                  "description",
+                  "sizes",
+                  "colors",
+                  "stock",
+                  "sku",
+                  "gender",
+                  "is_featured",
+                  "is_new_arrival"
+                ],
+                "properties": {
+                  "name": {
+                    "minLength": 1,
+                    "maxLength": 180,
+                    "pattern": "\\S",
+                    "type": "string"
+                  },
+                  "tagline": {
+                    "minLength": 0,
+                    "maxLength": 300,
+                    "type": "string"
+                  },
+                  "category": {
+                    "type": "string",
+                    "enum": [
+                      "Men",
+                      "Women",
+                      "Unisex",
+                      "Culture"
+                    ]
+                  },
+                  "subcategory": {
+                    "minLength": 1,
+                    "maxLength": 100,
+                    "pattern": "\\S",
+                    "type": "string"
+                  },
+                  "price": {
+                    "minimum": 0,
+                    "maximum": 1000000000,
+                    "type": "integer"
+                  },
+                  "image_url": {
+                    "minLength": 0,
+                    "maxLength": 2000,
+                    "type": "string"
+                  },
+                  "description": {
+                    "minLength": 1,
+                    "maxLength": 10000,
+                    "pattern": "\\S",
+                    "type": "string"
+                  },
+                  "materials": {
+                    "minLength": 0,
+                    "maxLength": 2000,
+                    "type": "string"
+                  },
+                  "sizes": {
+                    "minItems": 1,
+                    "maxItems": 30,
+                    "uniqueItems": true,
+                    "type": "array",
+                    "items": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  },
+                  "colors": {
+                    "minItems": 1,
+                    "maxItems": 30,
+                    "type": "array",
+                    "items": {
+                      "additionalProperties": false,
+                      "type": "object",
+                      "required": [
+                        "name",
+                        "hex"
+                      ],
+                      "properties": {
+                        "name": {
+                          "minLength": 1,
+                          "maxLength": 100,
+                          "pattern": "\\S",
+                          "type": "string"
+                        },
+                        "hex": {
+                          "pattern": "^#[0-9a-fA-F]{6}$",
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "stock": {
+                    "minimum": 0,
+                    "maximum": 1000000,
+                    "type": "integer"
+                  },
+                  "sku": {
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,99}$",
+                    "type": "string"
+                  },
+                  "gender": {
+                    "type": "string",
+                    "enum": [
+                      "men",
+                      "women",
+                      "unisex"
+                    ]
+                  },
+                  "is_featured": {
+                    "type": "boolean"
+                  },
+                  "is_new_arrival": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "AppClient": [],
+            "AdminSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/def-0"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/products/{id}": {
+      "get": {
+        "summary": "Read a published product",
+        "tags": [
+          "Catalogue"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "minLength": 1,
+              "maxLength": 100,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/def-0"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Partially update a product using its current version",
+        "tags": [
+          "Catalogue"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "type": "object",
+                "required": [
+                  "expected_version"
+                ],
+                "properties": {
+                  "name": {
+                    "minLength": 1,
+                    "maxLength": 180,
+                    "pattern": "\\S",
+                    "type": "string"
+                  },
+                  "tagline": {
+                    "minLength": 0,
+                    "maxLength": 300,
+                    "type": "string"
+                  },
+                  "category": {
+                    "type": "string",
+                    "enum": [
+                      "Men",
+                      "Women",
+                      "Unisex",
+                      "Culture"
+                    ]
+                  },
+                  "subcategory": {
+                    "minLength": 1,
+                    "maxLength": 100,
+                    "pattern": "\\S",
+                    "type": "string"
+                  },
+                  "price": {
+                    "minimum": 0,
+                    "maximum": 1000000000,
+                    "type": "integer"
+                  },
+                  "image_url": {
+                    "minLength": 0,
+                    "maxLength": 2000,
+                    "type": "string"
+                  },
+                  "description": {
+                    "minLength": 1,
+                    "maxLength": 10000,
+                    "pattern": "\\S",
+                    "type": "string"
+                  },
+                  "materials": {
+                    "minLength": 0,
+                    "maxLength": 2000,
+                    "type": "string"
+                  },
+                  "sizes": {
+                    "minItems": 1,
+                    "maxItems": 30,
+                    "uniqueItems": true,
+                    "type": "array",
+                    "items": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  },
+                  "colors": {
+                    "minItems": 1,
+                    "maxItems": 30,
+                    "type": "array",
+                    "items": {
+                      "additionalProperties": false,
+                      "type": "object",
+                      "required": [
+                        "name",
+                        "hex"
+                      ],
+                      "properties": {
+                        "name": {
+                          "minLength": 1,
+                          "maxLength": 100,
+                          "pattern": "\\S",
+                          "type": "string"
+                        },
+                        "hex": {
+                          "pattern": "^#[0-9a-fA-F]{6}$",
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "stock": {
+                    "minimum": 0,
+                    "maximum": 1000000,
+                    "type": "integer"
+                  },
+                  "sku": {
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,99}$",
+                    "type": "string"
+                  },
+                  "gender": {
+                    "type": "string",
+                    "enum": [
+                      "men",
+                      "women",
+                      "unisex"
+                    ]
+                  },
+                  "is_featured": {
+                    "type": "boolean"
+                  },
+                  "is_new_arrival": {
+                    "type": "boolean"
+                  },
+                  "expected_version": {
+                    "minimum": 1,
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "minLength": 1,
+              "maxLength": 100,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "AppClient": [],
+            "AdminSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/def-0"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Archive a product; retain order snapshots",
+        "tags": [
+          "Catalogue"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "minLength": 1,
+              "maxLength": 100,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "AppClient": [],
+            "AdminSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "4XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/inventory/{id}/adjustments": {
+      "post": {
+        "summary": "Atomically adjust available stock",
+        "tags": [
+          "Inventory"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "type": "object",
+                "required": [
+                  "delta",
+                  "reason"
+                ],
+                "properties": {
+                  "delta": {
+                    "minimum": -1000000,
+                    "maximum": 1000000,
+                    "not": {
+                      "enum": [
+                        0
+                      ]
+                    },
+                    "type": "integer"
+                  },
+                  "reason": {
+                    "minLength": 1,
+                    "maxLength": 500,
+                    "pattern": "\\S",
+                    "type": "string"
+                  },
+                  "expected_version": {
+                    "minimum": 0,
+                    "maximum": 1000000000,
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "minLength": 1,
+              "maxLength": 100,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          },
+          {
+            "schema": {
+              "minLength": 16,
+              "maxLength": 128,
+              "type": "string"
+            },
+            "in": "header",
+            "name": "idempotency-key",
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "AppClient": [],
+            "AdminSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/def-0"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/account/session": {
+      "get": {
+        "summary": "Restore customer and saved shopping",
+        "tags": [
+          "Accounts"
+        ],
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/def-3"
+                    },
+                    {
+                      "additionalProperties": false,
+                      "type": "object",
+                      "required": [
+                        "customer"
+                      ],
+                      "properties": {
+                        "customer": {
+                          "type": "object",
+                          "nullable": true,
+                          "enum": [
+                            null
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/account/signup": {
+      "post": {
+        "summary": "Create customer and session",
+        "tags": [
+          "Accounts"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "type": "object",
+                "required": [
+                  "name",
+                  "email",
+                  "password"
+                ],
+                "properties": {
+                  "name": {
+                    "minLength": 1,
+                    "maxLength": 180,
+                    "pattern": "\\S",
+                    "type": "string"
+                  },
+                  "email": {
+                    "format": "email",
+                    "maxLength": 254,
+                    "type": "string"
+                  },
+                  "password": {
+                    "minLength": 12,
+                    "maxLength": 128,
+                    "pattern": "\\S",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "AppClient": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/def-3"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/account/login": {
+      "post": {
+        "summary": "Sign in customer",
+        "tags": [
+          "Accounts"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "type": "object",
+                "required": [
+                  "email",
+                  "password"
+                ],
+                "properties": {
+                  "email": {
+                    "format": "email",
+                    "maxLength": 254,
+                    "type": "string"
+                  },
+                  "password": {
+                    "minLength": 12,
+                    "maxLength": 128,
+                    "pattern": "\\S",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "AppClient": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/def-3"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/account/logout": {
+      "post": {
+        "summary": "Revoke current customer session",
+        "tags": [
+          "Accounts"
+        ],
+        "security": [
+          {
+            "AppClient": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "4XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/account/shopping": {
+      "put": {
+        "summary": "Save canonical bag and wishlist with optimistic concurrency",
+        "tags": [
+          "Accounts"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "type": "object",
+                "required": [
+                  "cart",
+                  "wishlist",
+                  "expected_version"
+                ],
+                "properties": {
+                  "cart": {
+                    "maxItems": 100,
+                    "type": "array",
+                    "items": {
+                      "additionalProperties": false,
+                      "type": "object",
+                      "required": [
+                        "product_id",
+                        "size",
+                        "color",
+                        "quantity"
+                      ],
+                      "properties": {
+                        "product_id": {
+                          "minLength": 1,
+                          "maxLength": 100,
+                          "pattern": "\\S",
+                          "type": "string"
+                        },
+                        "size": {
+                          "minLength": 1,
+                          "maxLength": 100,
+                          "pattern": "\\S",
+                          "type": "string"
+                        },
+                        "color": {
+                          "minLength": 1,
+                          "maxLength": 100,
+                          "pattern": "\\S",
+                          "type": "string"
+                        },
+                        "quantity": {
+                          "minimum": 1,
+                          "maximum": 99,
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  },
+                  "wishlist": {
+                    "maxItems": 200,
+                    "uniqueItems": true,
+                    "type": "array",
+                    "items": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  },
+                  "expected_version": {
+                    "minimum": 0,
+                    "maximum": 1000000000,
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "AppClient": [],
+            "CustomerSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/def-2"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/account/shopping/merge": {
+      "post": {
+        "summary": "Merge guest shopping exactly once",
+        "tags": [
+          "Accounts"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "type": "object",
+                "required": [
+                  "cart",
+                  "wishlist"
+                ],
+                "properties": {
+                  "cart": {
+                    "maxItems": 100,
+                    "type": "array",
+                    "items": {
+                      "additionalProperties": false,
+                      "type": "object",
+                      "required": [
+                        "product_id",
+                        "size",
+                        "color",
+                        "quantity"
+                      ],
+                      "properties": {
+                        "product_id": {
+                          "minLength": 1,
+                          "maxLength": 100,
+                          "pattern": "\\S",
+                          "type": "string"
+                        },
+                        "size": {
+                          "minLength": 1,
+                          "maxLength": 100,
+                          "pattern": "\\S",
+                          "type": "string"
+                        },
+                        "color": {
+                          "minLength": 1,
+                          "maxLength": 100,
+                          "pattern": "\\S",
+                          "type": "string"
+                        },
+                        "quantity": {
+                          "minimum": 1,
+                          "maximum": 99,
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  },
+                  "wishlist": {
+                    "maxItems": 200,
+                    "uniqueItems": true,
+                    "type": "array",
+                    "items": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "minLength": 16,
+              "maxLength": 128,
+              "type": "string"
+            },
+            "in": "header",
+            "name": "idempotency-key",
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "AppClient": [],
+            "CustomerSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/def-2"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/account/orders": {
+      "get": {
+        "summary": "List own orders",
+        "tags": [
+          "Orders"
+        ],
+        "security": [
+          {
+            "CustomerSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/def-1"
+                  }
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create an order owned by the session customer",
+        "tags": [
+          "Orders"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "type": "object",
+                "required": [
+                  "customer_name",
+                  "customer_email",
+                  "customer_phone",
+                  "delivery_province",
+                  "delivery_district",
+                  "delivery_sector",
+                  "delivery_street",
+                  "items",
+                  "quote_fingerprint"
+                ],
+                "properties": {
+                  "customer_name": {
+                    "minLength": 1,
+                    "maxLength": 180,
+                    "pattern": "\\S",
+                    "type": "string"
+                  },
+                  "customer_email": {
+                    "format": "email",
+                    "maxLength": 254,
+                    "type": "string"
+                  },
+                  "customer_phone": {
+                    "pattern": "^\\+?[0-9 ()-]{7,25}$",
+                    "type": "string"
+                  },
+                  "delivery_province": {
+                    "type": "string",
+                    "enum": [
+                      "Kigali",
+                      "Northern",
+                      "Southern",
+                      "Eastern",
+                      "Western"
+                    ]
+                  },
+                  "delivery_district": {
+                    "minLength": 1,
+                    "maxLength": 100,
+                    "pattern": "\\S",
+                    "type": "string"
+                  },
+                  "delivery_sector": {
+                    "minLength": 1,
+                    "maxLength": 200,
+                    "pattern": "\\S",
+                    "type": "string"
+                  },
+                  "delivery_street": {
+                    "minLength": 1,
+                    "maxLength": 500,
+                    "pattern": "\\S",
+                    "type": "string"
+                  },
+                  "delivery_notes": {
+                    "minLength": 0,
+                    "maxLength": 2000,
+                    "type": "string"
+                  },
+                  "items": {
+                    "minItems": 1,
+                    "maxItems": 100,
+                    "type": "array",
+                    "items": {
+                      "additionalProperties": false,
+                      "type": "object",
+                      "required": [
+                        "product_id",
+                        "size",
+                        "color",
+                        "quantity"
+                      ],
+                      "properties": {
+                        "product_id": {
+                          "minLength": 1,
+                          "maxLength": 100,
+                          "pattern": "\\S",
+                          "type": "string"
+                        },
+                        "size": {
+                          "minLength": 1,
+                          "maxLength": 100,
+                          "pattern": "\\S",
+                          "type": "string"
+                        },
+                        "color": {
+                          "minLength": 1,
+                          "maxLength": 100,
+                          "pattern": "\\S",
+                          "type": "string"
+                        },
+                        "quantity": {
+                          "minimum": 1,
+                          "maximum": 99,
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  },
+                  "quote_fingerprint": {
+                    "minLength": 64,
+                    "maxLength": 64,
+                    "pattern": "\\S",
+                    "type": "string"
+                  },
+                  "access_token": {
+                    "pattern": "^[a-f0-9]{64}$",
+                    "description": "Generate 32 random bytes in the client and retain privately across retries. Only its hash is stored.",
+                    "type": "string"
+                  },
+                  "shopping_version": {
+                    "minimum": 0,
+                    "maximum": 1000000000,
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "minLength": 16,
+              "maxLength": 128,
+              "type": "string"
+            },
+            "in": "header",
+            "name": "idempotency-key",
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "AppClient": [],
+            "CustomerSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/def-1"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/account/orders/{id}": {
+      "get": {
+        "summary": "Read own order",
+        "tags": [
+          "Orders"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "minLength": 1,
+              "maxLength": 100,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "CustomerSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/def-1"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/session": {
+      "get": {
+        "summary": "Restore admin session",
+        "tags": [
+          "Administration"
+        ],
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "4XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/login": {
+      "post": {
+        "summary": "Sign in administrator",
+        "tags": [
+          "Administration"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "type": "object",
+                "required": [
+                  "password"
+                ],
+                "properties": {
+                  "email": {
+                    "format": "email",
+                    "maxLength": 254,
+                    "type": "string"
+                  },
+                  "password": {
+                    "minLength": 12,
+                    "maxLength": 128,
+                    "pattern": "\\S",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "AppClient": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "4XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/logout": {
+      "post": {
+        "summary": "Revoke admin session",
+        "tags": [
+          "Administration"
+        ],
+        "security": [
+          {
+            "AppClient": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "4XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/checkout/quote": {
+      "post": {
+        "summary": "Quote authoritative prices, delivery and availability",
+        "tags": [
+          "Orders"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "type": "object",
+                "required": [
+                  "items",
+                  "delivery_province"
+                ],
+                "properties": {
+                  "items": {
+                    "minItems": 1,
+                    "maxItems": 100,
+                    "type": "array",
+                    "items": {
+                      "additionalProperties": false,
+                      "type": "object",
+                      "required": [
+                        "product_id",
+                        "size",
+                        "color",
+                        "quantity"
+                      ],
+                      "properties": {
+                        "product_id": {
+                          "minLength": 1,
+                          "maxLength": 100,
+                          "pattern": "\\S",
+                          "type": "string"
+                        },
+                        "size": {
+                          "minLength": 1,
+                          "maxLength": 100,
+                          "pattern": "\\S",
+                          "type": "string"
+                        },
+                        "color": {
+                          "minLength": 1,
+                          "maxLength": 100,
+                          "pattern": "\\S",
+                          "type": "string"
+                        },
+                        "quantity": {
+                          "minimum": 1,
+                          "maximum": 99,
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  },
+                  "delivery_province": {
+                    "type": "string",
+                    "enum": [
+                      "Kigali",
+                      "Northern",
+                      "Southern",
+                      "Eastern",
+                      "Western"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "AppClient": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "4XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/orders": {
+      "post": {
+        "summary": "Create a retry-safe guest or signed-in order",
+        "tags": [
+          "Orders"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "type": "object",
+                "required": [
+                  "customer_name",
+                  "customer_email",
+                  "customer_phone",
+                  "delivery_province",
+                  "delivery_district",
+                  "delivery_sector",
+                  "delivery_street",
+                  "items",
+                  "quote_fingerprint"
+                ],
+                "properties": {
+                  "customer_name": {
+                    "minLength": 1,
+                    "maxLength": 180,
+                    "pattern": "\\S",
+                    "type": "string"
+                  },
+                  "customer_email": {
+                    "format": "email",
+                    "maxLength": 254,
+                    "type": "string"
+                  },
+                  "customer_phone": {
+                    "pattern": "^\\+?[0-9 ()-]{7,25}$",
+                    "type": "string"
+                  },
+                  "delivery_province": {
+                    "type": "string",
+                    "enum": [
+                      "Kigali",
+                      "Northern",
+                      "Southern",
+                      "Eastern",
+                      "Western"
+                    ]
+                  },
+                  "delivery_district": {
+                    "minLength": 1,
+                    "maxLength": 100,
+                    "pattern": "\\S",
+                    "type": "string"
+                  },
+                  "delivery_sector": {
+                    "minLength": 1,
+                    "maxLength": 200,
+                    "pattern": "\\S",
+                    "type": "string"
+                  },
+                  "delivery_street": {
+                    "minLength": 1,
+                    "maxLength": 500,
+                    "pattern": "\\S",
+                    "type": "string"
+                  },
+                  "delivery_notes": {
+                    "minLength": 0,
+                    "maxLength": 2000,
+                    "type": "string"
+                  },
+                  "items": {
+                    "minItems": 1,
+                    "maxItems": 100,
+                    "type": "array",
+                    "items": {
+                      "additionalProperties": false,
+                      "type": "object",
+                      "required": [
+                        "product_id",
+                        "size",
+                        "color",
+                        "quantity"
+                      ],
+                      "properties": {
+                        "product_id": {
+                          "minLength": 1,
+                          "maxLength": 100,
+                          "pattern": "\\S",
+                          "type": "string"
+                        },
+                        "size": {
+                          "minLength": 1,
+                          "maxLength": 100,
+                          "pattern": "\\S",
+                          "type": "string"
+                        },
+                        "color": {
+                          "minLength": 1,
+                          "maxLength": 100,
+                          "pattern": "\\S",
+                          "type": "string"
+                        },
+                        "quantity": {
+                          "minimum": 1,
+                          "maximum": 99,
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  },
+                  "quote_fingerprint": {
+                    "minLength": 64,
+                    "maxLength": 64,
+                    "pattern": "\\S",
+                    "type": "string"
+                  },
+                  "access_token": {
+                    "pattern": "^[a-f0-9]{64}$",
+                    "description": "Generate 32 random bytes in the client and retain privately across retries. Only its hash is stored.",
+                    "type": "string"
+                  },
+                  "shopping_version": {
+                    "minimum": 0,
+                    "maximum": 1000000000,
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "minLength": 16,
+              "maxLength": 128,
+              "type": "string"
+            },
+            "in": "header",
+            "name": "idempotency-key",
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "AppClient": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/def-1"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "List all store orders (admin)",
+        "tags": [
+          "Orders"
+        ],
+        "security": [
+          {
+            "AdminSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/def-1"
+                  }
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/orders/{id}": {
+      "get": {
+        "summary": "Read order using owner session or X-Order-Token",
+        "tags": [
+          "Orders"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "minLength": 1,
+              "maxLength": 100,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "X-Order-Token",
+            "required": false,
+            "description": "Guest order private access token. Owners/admins use their session cookie.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/def-1"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/orders/{id}/status": {
+      "patch": {
+        "summary": "Change fulfillment status; payment status is provider-owned",
+        "tags": [
+          "Orders"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "type": "object",
+                "required": [
+                  "status",
+                  "expected_version"
+                ],
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "PENDING",
+                      "CONFIRMED",
+                      "PROCESSING",
+                      "SHIPPED",
+                      "DELIVERED",
+                      "CANCELLED"
+                    ]
+                  },
+                  "note": {
+                    "minLength": 0,
+                    "maxLength": 2000,
+                    "type": "string"
+                  },
+                  "expected_version": {
+                    "minimum": 0,
+                    "maximum": 1000000000,
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "minLength": 1,
+              "maxLength": 100,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "AppClient": [],
+            "AdminSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/def-1"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/payments/config": {
+      "get": {
+        "summary": "Public enabled methods and configuration status",
+        "tags": [
+          "Payments"
+        ],
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "4XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/orders/{id}/payment-session": {
+      "post": {
+        "summary": "Start or resume hosted card / Rwanda mobile money payment",
+        "tags": [
+          "Payments"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "type": "object",
+                "required": [
+                  "method"
+                ],
+                "properties": {
+                  "method": {
+                    "type": "string",
+                    "enum": [
+                      "card",
+                      "mobile_money"
+                    ]
+                  },
+                  "payer_phone": {
+                    "pattern": "^\\+?[0-9 ()-]{7,25}$",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "minLength": 1,
+              "maxLength": 100,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          },
+          {
+            "schema": {
+              "minLength": 16,
+              "maxLength": 128,
+              "type": "string"
+            },
+            "in": "header",
+            "name": "idempotency-key",
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "X-Order-Token",
+            "required": false,
+            "description": "Guest order private access token. Owners/admins use their session cookie.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "AppClient": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/def-6"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/orders/{id}/payment-status": {
+      "get": {
+        "summary": "Read persisted payment truth",
+        "tags": [
+          "Payments"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "minLength": 1,
+              "maxLength": 100,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "X-Order-Token",
+            "required": false,
+            "description": "Guest order private access token. Owners/admins use their session cookie.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "4XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/orders/{id}/reconcile-payment": {
+      "post": {
+        "summary": "Verify pending attempts directly with Flutterwave",
+        "tags": [
+          "Payments"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "minLength": 1,
+              "maxLength": 100,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "X-Order-Token",
+            "required": false,
+            "description": "Guest order private access token. Owners/admins use their session cookie.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "AppClient": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "4XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/payments/flutterwave/webhook": {
+      "post": {
+        "summary": "Authenticated Flutterwave v3 webhook; queued durably",
+        "tags": [
+          "Payments"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": true,
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      }
+    },
+    "/api/admin/payments": {
+      "get": {
+        "summary": "Actual payment attempts and refund ledger",
+        "tags": [
+          "Payments"
+        ],
+        "security": [
+          {
+            "AdminSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "4XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/payments/{id}/reconcile": {
+      "post": {
+        "summary": "Reconcile one provider payment",
+        "tags": [
+          "Payments"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "minLength": 1,
+              "maxLength": 100,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "AppClient": [],
+            "AdminSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "4XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/payments/{id}/refunds": {
+      "post": {
+        "summary": "Initiate an authorized provider refund",
+        "tags": [
+          "Payments"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "type": "object",
+                "required": [
+                  "amount",
+                  "reason"
+                ],
+                "properties": {
+                  "amount": {
+                    "minimum": 1,
+                    "maximum": 1000000000000000,
+                    "type": "integer"
+                  },
+                  "reason": {
+                    "minLength": 1,
+                    "maxLength": 500,
+                    "pattern": "\\S",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "minLength": 1,
+              "maxLength": 100,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          },
+          {
+            "schema": {
+              "minLength": 16,
+              "maxLength": 128,
+              "type": "string"
+            },
+            "in": "header",
+            "name": "idempotency-key",
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "AppClient": [],
+            "AdminSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "4XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/refunds/{id}/reconcile": {
+      "post": {
+        "summary": "Verify refund completion with the provider",
+        "tags": [
+          "Payments"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "minLength": 1,
+              "maxLength": 100,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "AppClient": [],
+            "AdminSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "4XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/refunds/{id}/recover": {
+      "post": {
+        "summary": "Recover an uncertain refund using a verified provider refund ID",
+        "tags": [
+          "Payments"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "type": "object",
+                "required": [
+                  "provider_refund_id"
+                ],
+                "properties": {
+                  "provider_refund_id": {
+                    "minLength": 1,
+                    "maxLength": 100,
+                    "pattern": "\\S",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "minLength": 1,
+              "maxLength": 100,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "AppClient": [],
+            "AdminSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "4XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/flutterwave/config": {
+      "get": {
+        "summary": "Read non-secret gateway configuration",
+        "tags": [
+          "Administration"
+        ],
+        "security": [
+          {
+            "AdminSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "4XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Save merchant display name; keys and mode are deployment configuration",
+        "tags": [
+          "Administration"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "type": "object",
+                "required": [
+                  "merchant_name"
+                ],
+                "properties": {
+                  "merchant_name": {
+                    "minLength": 1,
+                    "maxLength": 180,
+                    "pattern": "\\S",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "AppClient": [],
+            "AdminSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "4XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/custom-requests": {
+      "get": {
+        "summary": "Admin-only full request list",
+        "tags": [
+          "Customs"
+        ],
+        "security": [
+          {
+            "AdminSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/def-5"
+                  }
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Persist a made-to-measure request",
+        "tags": [
+          "Customs"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "type": "object",
+                "required": [
+                  "full_name",
+                  "phone",
+                  "email",
+                  "clothing_type",
+                  "preferred_color",
+                  "description",
+                  "preferred_deadline"
+                ],
+                "properties": {
+                  "full_name": {
+                    "minLength": 1,
+                    "maxLength": 180,
+                    "pattern": "\\S",
+                    "type": "string"
+                  },
+                  "phone": {
+                    "pattern": "^\\+?[0-9 ()-]{7,25}$",
+                    "type": "string"
+                  },
+                  "email": {
+                    "format": "email",
+                    "maxLength": 254,
+                    "type": "string"
+                  },
+                  "gender": {
+                    "type": "string",
+                    "enum": [
+                      "Men",
+                      "Women",
+                      "Unisex"
+                    ]
+                  },
+                  "clothing_type": {
+                    "minLength": 1,
+                    "maxLength": 200,
+                    "pattern": "\\S",
+                    "type": "string"
+                  },
+                  "preferred_color": {
+                    "minLength": 1,
+                    "maxLength": 300,
+                    "pattern": "\\S",
+                    "type": "string"
+                  },
+                  "measurements": {
+                    "minLength": 0,
+                    "maxLength": 4000,
+                    "type": "string"
+                  },
+                  "occasion": {
+                    "minLength": 0,
+                    "maxLength": 1000,
+                    "type": "string"
+                  },
+                  "description": {
+                    "minLength": 1,
+                    "maxLength": 10000,
+                    "pattern": "\\S",
+                    "type": "string"
+                  },
+                  "preferred_deadline": {
+                    "format": "date",
+                    "type": "string"
+                  },
+                  "media_id": {
+                    "minLength": 1,
+                    "maxLength": 100,
+                    "pattern": "\\S",
+                    "type": "string"
+                  },
+                  "upload_token": {
+                    "pattern": "^[a-f0-9]{64}$",
+                    "description": "Generate 32 random bytes in the client and retain privately across retries. Only its hash is stored.",
+                    "type": "string"
+                  },
+                  "access_token": {
+                    "pattern": "^[a-f0-9]{64}$",
+                    "description": "Generate 32 random bytes in the client and retain privately across retries. Only its hash is stored.",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "minLength": 16,
+              "maxLength": 128,
+              "type": "string"
+            },
+            "in": "header",
+            "name": "idempotency-key",
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "AppClient": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/def-4"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/account/custom-requests": {
+      "get": {
+        "summary": "List own request summaries",
+        "tags": [
+          "Customs"
+        ],
+        "security": [
+          {
+            "CustomerSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/def-4"
+                  }
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/custom-requests/track": {
+      "post": {
+        "summary": "Track one request with owner session or private token",
+        "tags": [
+          "Customs"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "type": "object",
+                "required": [
+                  "request_number"
+                ],
+                "properties": {
+                  "request_number": {
+                    "minLength": 1,
+                    "maxLength": 100,
+                    "pattern": "\\S",
+                    "type": "string"
+                  },
+                  "access_token": {
+                    "pattern": "^[a-f0-9]{64}$",
+                    "description": "Generate 32 random bytes in the client and retain privately across retries. Only its hash is stored.",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "AppClient": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/def-4"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/custom-requests/{id}/status": {
+      "patch": {
+        "summary": "Advance workflow and edit public/internal notes separately",
+        "tags": [
+          "Customs"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "type": "object",
+                "required": [
+                  "status",
+                  "expected_version"
+                ],
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "NEW",
+                      "CONTACTED",
+                      "DESIGNING",
+                      "APPROVED",
+                      "IN PRODUCTION",
+                      "READY",
+                      "COMPLETED",
+                      "CANCELLED"
+                    ]
+                  },
+                  "expected_version": {
+                    "minimum": 0,
+                    "maximum": 1000000000,
+                    "type": "integer"
+                  },
+                  "notes": {
+                    "minLength": 0,
+                    "maxLength": 4000,
+                    "type": "string"
+                  },
+                  "internal_notes": {
+                    "minLength": 0,
+                    "maxLength": 4000,
+                    "type": "string"
+                  },
+                  "estimated_price": {
+                    "minimum": 0,
+                    "maximum": 1000000000,
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "minLength": 1,
+              "maxLength": 100,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "AppClient": [],
+            "AdminSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/def-5"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/uploads": {
+      "post": {
+        "summary": "Upload one validated image; product purpose requires admin",
+        "tags": [
+          "Media"
+        ],
+        "description": "Multipart field file. JPEG/PNG/WebP, max 5 MB, one image. For Swagger use the file picker. Retain upload_token until the request is submitted.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "product",
+                "custom"
+              ]
+            },
+            "in": "query",
+            "name": "purpose",
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "AppClient": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "4XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "file"
+                ],
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/media/{id}": {
+      "get": {
+        "summary": "Read public product image or authorized private reference",
+        "tags": [
+          "Media"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "minLength": 1,
+              "maxLength": 100,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "X-Upload-Token",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Tracking-Token",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "4XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/overview": {
+      "get": {
+        "summary": "Committed counts and gross verified paid totals by environment",
+        "tags": [
+          "Administration"
+        ],
+        "security": [
+          {
+            "AdminSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "4XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/events": {
+      "get": {
+        "summary": "Scoped polling events; refetch on reconnect, upsert by ID/version",
+        "tags": [
+          "Updates"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "pattern": "^[0-9]+$",
+              "type": "string"
+            },
+            "in": "query",
+            "name": "after",
+            "required": false
+          }
+        ],
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "4XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/audit": {
+      "get": {
+        "summary": "Recent administrative audit entries",
+        "tags": [
+          "Administration"
+        ],
+        "security": [
+          {
+            "AdminSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "4XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "code"
+                  ],
+                  "properties": {
+                    "error": {
+                      "minLength": 1,
+                      "maxLength": 2000,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "code": {
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000"
+    }
+  ]
+}

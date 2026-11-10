@@ -1,0 +1,20 @@
+services:
+  api:
+    build: .
+    init: true
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3000:3000"
+    env_file: .env
+    environment:
+      HOST: 0.0.0.0
+      DATABASE_PATH: /data/aurie.sqlite
+      UPLOAD_DIR: /data/uploads
+    volumes:
+      - aurie-data:/data
+    stop_grace_period: 45s
+    security_opt:
+      - no-new-privileges:true
+    cap_drop: [ALL]
+volumes:
+  aurie-data:

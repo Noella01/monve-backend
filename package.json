@@ -1,0 +1,41 @@
+{
+  "name": "aurie-backend",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "test:e2e": "node --experimental-sqlite node_modules/@playwright/test/cli.js test",
+    "dev": "node --experimental-sqlite --env-file-if-exists=.env --import tsx --watch src/server.ts",
+    "start": "node --experimental-sqlite --env-file-if-exists=.env dist/src/server.js",
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "test": "node --experimental-sqlite --import tsx --test --test-concurrency=1 tests/*.test.ts",
+    "db:migrate": "node --experimental-sqlite --env-file-if-exists=.env --import tsx scripts/manage.ts migrate",
+    "db:seed": "node --experimental-sqlite --env-file-if-exists=.env --import tsx scripts/manage.ts seed",
+    "admin:create": "node --experimental-sqlite --env-file-if-exists=.env --import tsx scripts/manage.ts admin",
+    "admin:reset": "node --experimental-sqlite --env-file-if-exists=.env --import tsx scripts/manage.ts admin-reset",
+    "db:backup": "node --experimental-sqlite --env-file-if-exists=.env --import tsx scripts/manage.ts backup",
+    "openapi": "node --experimental-sqlite --import tsx scripts/openapi.ts"
+  },
+  "dependencies": {
+    "@fastify/cookie": "^11.1.5",
+    "@fastify/cors": "^11.4.0",
+    "@fastify/helmet": "^13.2.0",
+    "@fastify/multipart": "^10.1.7",
+    "@fastify/rate-limit": "^11.2.2",
+    "@fastify/swagger": "^9.9.3",
+    "@fastify/swagger-ui": "^6.1.3",
+    "@sinclair/typebox": "^0.34.52",
+    "fastify": "^5.12.8",
+    "sharp": "^0.35.5"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.64.1",
+    "@types/node": "^26.6.6",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  }
+}

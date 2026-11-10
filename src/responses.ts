@@ -1,0 +1,13 @@
+import { Type as T } from '@sinclair/typebox';
+import { ProductInput, Color, str, integer, fulfillment, customStatus, Address, obj, choice } from './schemas.js';
+const time = T.String({format:'date-time'});
+export const Product = T.Object({...ProductInput.properties,id:str(100),version:integer(),created_at:time,updated_at:time},{$id:'Product'});
+export const Item=obj({product_id:str(100),product_name:str(),product_image:str(2000,0),size:str(100),color:str(100),quantity:integer(99),price:integer()});
+export const Timeline=obj({status:fulfillment,timestamp:time,title:str(),description:str(2000,0)});
+export const Order=T.Object({...Address,id:str(100),order_number:str(),items:T.Array(Item),subtotal:integer(1e15),delivery_fee:integer(),total:integer(1e15),currency:T.Literal('RWF'),status:fulfillment,payment_status:choice('PENDING','SUCCESSFUL','FAILED','REFUNDED'),payment_method:str(100,0),transaction_reference:str(200,0),created_at:time,updated_at:time,version:integer(),reservation_expires_at:time,reservation_state:str(),review_required:T.Boolean(),environment:str(),timeline:T.Array(Timeline)},{$id:'Order'});
+export const Shopping=T.Object({cart:T.Array(obj({product:T.Ref(Product),selectedSize:str(100),selectedColor:Color,quantity:integer(99)})),wishlist:T.Array(T.Ref(Product)),shopping_version:integer(),issues:T.Array(str(2000))},{$id:'Shopping'});
+export const Account=T.Object({...Shopping.properties,customer:obj({id:str(100),name:str(180),email:str(254)}),orders:T.Array(T.Ref(Order))},{$id:'Account'});
+export const Tracking=T.Object({id:str(100),request_number:str(),full_name:str(180),phone:str(30),clothing_type:str(),preferred_color:str(300),occasion:str(1000,0),preferred_deadline:T.String(),status:customStatus,notes:str(4000,0),estimated_price:T.Union([integer(),T.Null()]),version:integer(),created_at:time,updated_at:time,media_id:T.Union([str(100),T.Null()]),history:T.Array(obj({status:customStatus,timestamp:time,notes:str(4000,0)})),deadline_is_confirmed:T.Literal(false)},{$id:'Tracking'});
+export const Custom=T.Object({...Tracking.properties,email:str(254),gender:str(),measurements:str(4000,0),description:str(10000),internal_notes:str(4000,0)},{$id:'CustomRequest'});
+export const Payment=T.Object({id:str(100),order_id:str(100),reference:str(),provider_id:T.Union([str(),T.Null()]),method:str(),environment:str(),amount:integer(1e15),currency:str(),status:str(),checkout_url:T.Union([str(2000),T.Null()]),verified_at:T.Union([time,T.Null()]),failure_code:T.Union([str(),T.Null()]),created_at:time,updated_at:time},{$id:'Payment'});
+export const schemas=[Product,Order,Shopping,Account,Tracking,Custom,Payment];

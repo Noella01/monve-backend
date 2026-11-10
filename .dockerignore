@@ -1,0 +1,11 @@
+node_modules
+dist
+.git
+.env
+.env.*
+.runtime
+.data
+integration
+backups
+coverage
+*.log

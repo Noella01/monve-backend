@@ -1,0 +1,178 @@
+@import "tailwindcss";
+
+.account-page { max-width: 1120px; margin: 0 auto; padding: 64px 24px 96px; }
+.account-auth { display: grid; grid-template-columns: 1fr 1fr; gap: 70px; align-items: start; }
+.account-page h1 { font-size: clamp(28px, 4vw, 46px); margin: 12px 0 20px; }
+.account-page h2 { font-size: 22px; margin-bottom: 20px; }
+.account-page p { font-size: 14px; line-height: 1.7; }
+.account-kicker { letter-spacing: .16em; font-size: 10px !important; }
+.account-panel { padding: 28px; background: var(--tone-111111); border: 1px solid var(--tone-2a2a2a); border-radius: 12px; }
+.account-panel label { display: block; font-size: 13px; margin: 18px 0; }
+.account-panel input { display: block; width: 100%; padding: 12px; margin-top: 8px; border: 1px solid var(--tone-404040); background: var(--tone-0a0a0a); border-radius: 6px; }
+.account-primary { background: var(--tone-f5f5f5); color: var(--tone-0a0a0a); padding: 13px 22px; border-radius: 999px; margin: 18px 0; cursor: pointer; }
+.account-link { display: block; text-decoration: underline; text-underline-offset: 4px; font-size: 13px; margin-top: 20px; cursor: pointer; }
+.account-muted { color: var(--tone-a3a3a3); font-size: 12px !important; }
+.account-heading { display: flex; justify-content: space-between; align-items: baseline; gap: 20px; }
+.account-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 36px 0; }
+.account-summary button { padding: 24px; text-align: left; border: 1px solid var(--tone-2a2a2a); border-radius: 12px; cursor: pointer; }
+.account-summary strong { display: block; font-size: 30px; margin-bottom: 12px; }
+.account-summary span { font-size: 12px; }
+.account-tabs { display: flex; gap: 24px; margin: 24px 0; }
+.account-tabs button { padding-bottom: 8px; cursor: pointer; font-size: 13px; }
+.account-tabs button[aria-pressed="true"] { border-bottom: 2px solid currentColor; }
+.account-empty { text-align: center; padding: 40px 0; }
+.account-order { border-top: 1px solid var(--tone-2a2a2a); padding: 20px 0; }
+.account-order summary { display: flex; justify-content: space-between; gap: 16px; cursor: pointer; font-size: 12px; overflow-wrap: anywhere; }
+.account-order small { display: block; margin-top: 8px; color: var(--tone-a3a3a3); }
+.account-order p { margin-top: 12px; }
+.account-page button:disabled { opacity: .5; cursor: wait; }
+.account-page [role="alert"] { padding: 12px; border: 1px solid #b45309; margin: 12px 0; }
+@media (max-width: 767px) {
+  .account-auth { grid-template-columns: 1fr; gap: 28px; }
+  .account-page { padding: 32px 16px 60px; }
+  .account-summary { gap: 8px; }
+  .account-summary button { padding: 12px; }
+}
+@layer base {
+  :root {
+    --font-heading: 'Plus Jakarta Sans', Arial, sans-serif;
+    --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--tone-0a0a0a);
+    color: var(--tone-f5f5f5);
+  }
+
+  h1, h2, h3, .font-heading {
+    font-family: var(--font-heading);
+    letter-spacing: 0.04em;
+  }
+}
+
+/* Custom minimal scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--tone-0a0a0a);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--tone-2a2a2a);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--tone-404040);
+}
+
+/* Shared palette: product photos and color swatches retain their original colors. */
+:root {
+  color-scheme: dark;
+  --tone-0a0a0a: #0A0A0A;
+  --tone-f5f5f5: #F5F5F5;
+  --tone-161616: #161616;
+  --tone-ffffff: #ffffff;
+  --tone-a3a3a3: #a3a3a3;
+  --tone-0f0f0f: #0F0F0F;
+  --tone-262626: #262626;
+  --tone-222222: #222222;
+  --tone-d4d4d4: #d4d4d4;
+  --tone-1c1c1c: #1C1C1C;
+  --tone-737373: #737373;
+  --tone-000000: #000000;
+  --tone-e5e5e5: #e5e5e5;
+  --tone-151515: #151515;
+  --tone-171717: #171717;
+  --tone-2a2a2a: #2A2A2A;
+  --tone-2e2e2e: #2E2E2E;
+  --tone-111111: #111111;
+  --tone-121212: #121212;
+  --tone-888888: #888888;
+  --tone-1e1e1e: #1E1E1E;
+  --tone-181818: #181818;
+  --tone-2b2b2b: #2B2B2B;
+  --tone-1f1f1f: #1F1F1F;
+  --tone-0d0d0d: #0D0D0D;
+  --tone-282828: #282828;
+  --tone-333333: #333333;
+  --tone-1a1a1a: #1A1A1A;
+  --tone-292929: #292929;
+  --tone-050505: #050505;
+  --tone-a0a0a0: #A0A0A0;
+  --tone-404040: #404040;
+  --tone-707070: #707070;
+  --tone-525252: #525252;
+  --tone-383838: #383838;
+  --tone-999999: #999999;
+  --tone-252525: #252525;
+  --tone-202020: #202020;
+  --tone-242424: #242424;
+  --tone-070707: #070707;
+  --tone-141414: #141414;
+  --tone-2f2f2f: #2F2F2F;
+  --tone-101010: #101010;
+  --tone-171512: #171717;
+  --tone-303030: #303030;
+}
+:root[data-theme="light"] {
+  color-scheme: light;
+  --color-amber-200: #854d0e;
+  --color-amber-300: #92400e;
+  --color-amber-400: #a16207;
+  --color-amber-950: #fef3c7;
+  --color-emerald-400: #047857;
+  --color-emerald-950: #d1fae5;
+  --color-blue-400: #1d4ed8;
+  --color-blue-950: #dbeafe;
+  --color-red-300: #b91c1c;
+  --color-red-400: #b91c1c;
+  --color-red-900: #fee2e2;
+  --color-red-950: #fee2e2;
+  --tone-0a0a0a: #ffffff;
+  --tone-f5f5f5: #141414;
+  --tone-161616: #e9e9e9;
+  --tone-ffffff: #141414;
+  --tone-a3a3a3: #5c5c5c;
+  --tone-0f0f0f: #f0f0f0;
+  --tone-262626: #d9d9d9;
+  --tone-222222: #dddddd;
+  --tone-d4d4d4: #2b2b2b;
+  --tone-1c1c1c: #e3e3e3;
+  --tone-737373: #666666;
+  --tone-000000: #fafafa;
+  --tone-e5e5e5: #1a1a1a;
+  --tone-151515: #eaeaea;
+  --tone-171717: #e8e8e8;
+  --tone-2a2a2a: #d5d5d5;
+  --tone-2e2e2e: #d1d1d1;
+  --tone-111111: #eeeeee;
+  --tone-121212: #ededed;
+  --tone-888888: #666666;
+  --tone-1e1e1e: #e1e1e1;
+  --tone-181818: #e7e7e7;
+  --tone-2b2b2b: #d4d4d4;
+  --tone-1f1f1f: #e0e0e0;
+  --tone-0d0d0d: #f2f2f2;
+  --tone-282828: #d7d7d7;
+  --tone-333333: #cccccc;
+  --tone-1a1a1a: #e5e5e5;
+  --tone-292929: #d6d6d6;
+  --tone-050505: #fafafa;
+  --tone-a0a0a0: #5f5f5f;
+  --tone-404040: #bfbfbf;
+  --tone-707070: #666666;
+  --tone-525252: #707070;
+  --tone-383838: #c7c7c7;
+  --tone-999999: #666666;
+  --tone-252525: #dadada;
+  --tone-202020: #dfdfdf;
+  --tone-242424: #dbdbdb;
+  --tone-070707: #f8f8f8;
+  --tone-141414: #ebebeb;
+  --tone-2f2f2f: #d0d0d0;
+  --tone-101010: #efefef;
+  --tone-171512: #e8e8e8;
+  --tone-303030: #cfcfcf;
+}

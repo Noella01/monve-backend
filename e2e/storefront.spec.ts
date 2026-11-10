@@ -1,0 +1,112 @@
+import { test, expect } from '@playwright/test';
+import { randomBytes, randomUUID } from 'node:crypto';
+import sharp from 'sharp';
+import { Store } from '../src/db.js';
+import { Auth } from '../src/auth.js';
+import { config } from '../src/config.js';
+test.beforeEach(async({page})=>{page.on('pageerror',error=>console.error('Browser exception:',error.message));page.on('requestfailed',request=>{const url=new URL(request.url());console.error('Browser request failed:',url.origin+url.pathname,request.failure()?.errorText);});});
+test('Swagger serves interactive contracts and runs a catalogue request',async({page})=>{
+  await page.goto('http://localhost:3000/docs/');
+  await expect(page.getByText('AURIE Store API',{exact:false}).first()).toBeVisible();
+  const endpoint=page.locator('.opblock-get').filter({has:page.locator('[data-path="/api/products"]')}).first();
+  await endpoint.locator('.opblock-summary').click();
+  await endpoint.getByRole('button',{name:'Try it out'}).click();
+  await endpoint.getByRole('button',{name:'Execute',exact:true}).click();
+  await expect(endpoint.locator('.responses-inner')).toContainText('Obsidian Minimal Blazer');
+});
+test('guest checkout uses authoritative quote, persists pending order and recovers after reload',async({page})=>{
+  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
+  await page.goto('/shop');
+  await page.getByRole('button',{name:'Add Obsidian Minimal Blazer to cart',exact:true}).click();
+  await page.getByRole('button',{name:'Proceed to Checkout'}).click();
+  const dialog=page.getByRole('dialog');
+  await dialog.getByLabel('Full name',{exact:true}).fill('Browser Guest');
+  await dialog.getByLabel('Email',{exact:true}).fill('browser@example.test');
+  await dialog.getByLabel('Phone / WhatsApp').fill('+250788123456');
+  await dialog.getByLabel('District',{exact:true}).fill('Gasabo');
+  await dialog.getByLabel('Sector / cell').fill('Kimironko');
+  await dialog.getByLabel('Street / house / landmark').fill('KG 12 Street');
+  await dialog.getByRole('button',{name:'Review current price & availability'}).click();
+  await expect(dialog.getByText('Review your order',{exact:true})).toBeVisible();
+  await dialog.getByRole('button',{name:'Save order & continue'}).click();
+  await expect(dialog.getByText('Order saved — payment pending',{exact:true})).toBeVisible();
+  await expect(dialog.getByText('Online payments are currently unavailable.',{exact:false})).toBeVisible();
+  const number=await dialog.getByText(/AUR-\d{8}-/).first().textContent();
+  await page.reload();await page.getByRole('button',{name:'Resume saved order / check payment'}).click();
+  await expect(page.getByRole('dialog')).toContainText(number!);
+  expect(errors).toEqual([]);
+});
+test('signup merges once, recovery after a lost save does not double quantities, and logout retains guest items',async({page})=>{
+  await page.goto('/shop');
+  await page.getByRole('button',{name:'Add Tailored Poplin Mandarin Shirt to cart',exact:true}).click();
+  await page.goto('/signup');
+  await page.getByLabel('Full name',{exact:true}).fill('Browser Customer');
+  await page.getByLabel('Email address').fill(`browser-${Date.now()}@example.test`);
+  await page.getByLabel('Password',{exact:true}).fill('A browser test passphrase!');
+  await page.getByRole('button',{name:'Sign up',exact:true}).click();
+  await expect(page.getByRole('heading',{name:'Hello, Browser.'})).toBeVisible();
+  const state=await page.request.get('http://localhost:3000/api/account/session');
+  expect((await state.json()).cart[0].quantity).toBe(1);
+  await page.reload();
+  const restored=await page.request.get('http://localhost:3000/api/account/session');expect((await restored.json()).cart[0].quantity).toBe(1);
+  // The server commits the save, but the browser receives an error. Recovery must
+  // replace the retained full snapshot, rather than merge and double its quantity.
+  await page.goto('/shop');
+  await page.route('**/api/account/shopping',async route=>{
+    if(route.request().method()!=='PUT')return route.continue();
+    await route.fetch();
+    await route.fulfill({status:503,contentType:'application/json',body:JSON.stringify({error:'Simulated lost save response',code:'TEST_LOST_RESPONSE'})});
+  });
+  const lostSave=page.waitForResponse(response=>response.url().endsWith('/api/account/shopping')&&response.request().method()==='PUT');
+  await page.getByRole('button',{name:'Add Tailored Poplin Mandarin Shirt to cart',exact:true}).click();
+  await lostSave;
+  await expect.poll(()=>page.evaluate(()=>Object.keys(localStorage).some(key=>key.startsWith('aurie_unsaved_')))).toBe(true);
+  await page.unroute('**/api/account/shopping');
+  await page.goto('/account');
+  await page.getByRole('button',{name:'Recover saved shopping',exact:true}).click();
+  await expect(page.getByRole('button',{name:'Recover saved shopping',exact:true})).toBeHidden();
+  const recovered=await (await page.request.get('http://localhost:3000/api/account/session')).json();
+  expect(recovered.cart[0].quantity).toBe(2);
+  await page.evaluate(cart=>localStorage.setItem('lenos_cart',JSON.stringify(cart)),[{...recovered.cart[0],quantity:1}]);
+  await page.getByRole('button',{name:'Log out',exact:true}).click();
+  const loggedOut=await page.request.get('http://localhost:3000/api/account/session');expect((await loggedOut.json()).customer).toBeNull();
+  expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('lenos_cart')!)[0].quantity)).toBe(1);
+});
+test('Customs upload, submission and private tracking work in the browser',async({page})=>{
+  await page.goto('/customs');
+  await page.locator('#custom-name').fill('Browser Customs');
+  await page.locator('#custom-phone').fill('+250788123456');
+  await page.locator('#custom-email').fill('customs-browser@example.test');
+  await page.locator('#custom-garment').fill('Experimental handwoven jacket');
+  await page.locator('#custom-color').fill('Bronze');
+  await page.locator('#custom-deadline').fill('2099-01-01');
+  await page.locator('#custom-description').fill('A custom jacket for the browser integration test.');
+  const png=await sharp({create:{width:3,height:3,channels:3,background:'blue'}}).png().toBuffer();
+  await page.locator('input[type="file"]').setInputFiles({name:'reference.png',mimeType:'image/png',buffer:png});
+  const submit=page.locator('button[type="submit"]').first();await expect(submit).toBeEnabled();await submit.click();
+  await expect(page.getByText('Custom Request Received',{exact:true})).toBeVisible();
+  const proof=await page.evaluate(()=>JSON.parse(localStorage.getItem('aurie_custom_tracking')!));
+  expect(proof.token).toHaveLength(64);
+  await page.getByRole('button',{name:'Track Request Status'}).click();
+  await expect(page.getByText('Custom Request Details',{exact:true})).toBeVisible();
+  await page.reload();await page.getByRole('button',{name:/Track.*request/i}).first().click();
+  await page.locator('#custom-tracking-number').fill(proof.number);
+  await page.getByRole('button',{name:'Search',exact:true}).click();
+  await expect(page.getByText('Custom Request Details',{exact:true})).toBeVisible();
+});
+test('admin login, stock adjustment, settings and logout enforce real sessions',async({page})=>{
+  const db=new Store(config().databasePath),email=`browser-admin-${randomUUID()}@example.test`,password=randomBytes(24).toString('hex');
+  const admin=await new Auth(db,config()).register('Browser Operator',email,password,'admin');
+  try {
+    await page.goto('/admin');await page.getByLabel('Admin email (optional with one administrator)').fill(email);
+    await page.getByPlaceholder('Enter admin password').fill(password);await page.getByRole('button',{name:'Unlock Admin Dashboard'}).click();
+    await expect(page.getByText('Store Management',{exact:true}).first()).toBeVisible();
+    await page.goto('/admin/inventory');
+    const before=(await (await page.request.get('http://localhost:3000/api/products')).json()).find((p:any)=>p.id==='prod-002');
+    await page.getByRole('button',{name:'Add 1 unit to Tailored Poplin Mandarin Shirt',exact:true}).click();
+    await expect.poll(async()=>{const all=await (await page.request.get('http://localhost:3000/api/products')).json();return all.find((p:any)=>p.id==='prod-002').stock;}).toBe(before.stock+1);
+    await page.goto('/admin/settings');await expect(page.getByRole('heading',{name:'Payments & gateway settings'})).toBeVisible();
+    await page.getByRole('button',{name:/Lock Admin Portal/}).click();
+    const session=await page.request.get('http://localhost:3000/api/admin/session');expect((await session.json()).authenticated).toBe(false);
+  }finally{db.run('DELETE FROM sessions WHERE principal_id=?',admin.id);db.run('DELETE FROM principals WHERE id=?',admin.id);db.close();}
+});

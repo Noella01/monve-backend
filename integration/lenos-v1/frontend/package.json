@@ -1,0 +1,10 @@
+{
+  "name": "lenos-frontend",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "npm --prefix .. run dev:frontend",
+    "build": "npm --prefix .. run build",
+    "preview": "npm --prefix .. run preview"
+  }
+}

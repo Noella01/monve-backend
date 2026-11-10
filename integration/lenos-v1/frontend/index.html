@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <script>
+      // Apply the saved theme before the first paint.
+      try {
+        var savedTheme = localStorage.getItem('aurie-theme');
+        document.documentElement.dataset.theme = location.pathname.startsWith('/admin') ? 'dark' :
+          (savedTheme === 'light' || savedTheme === 'dark' ? savedTheme :
+            'light');
+      } catch (_) {
+        document.documentElement.dataset.theme = location.pathname.startsWith('/admin') ? 'dark' :
+          'light';
+      }
+    </script>
+    <meta name="theme-color" content="#111111" />
+    <link rel="icon" type="image/svg+xml" href="/aurie.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AURIE — Style With No Limits</title>
+    <meta name="description" content="AURIE is a contemporary unisex fashion brand combining modern clothing, custom-made pieces, and Rwandan traditional wear." />
+    <meta property="og:title" content="AURIE — Style With No Limits" />
+    <meta property="og:description" content="Contemporary fashion label combining modern clothing, bespoke pieces, and Rwandan heritage wear." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  </head>
+  <body class="antialiased min-h-screen">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+
