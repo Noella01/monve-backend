@@ -20,7 +20,7 @@ Logs omit request bodies and redact cookies, authorization, access tokens and we
 
 ## Administrator inside Docker
 
-The container has its own database in the named volume; an administrator provisioned into the local `.runtime` database is not automatically copied there. Prepare the private JSON credential file described in the README, then run the compiled CLI against the container volume. In PowerShell:
+The container has its own database in the named volume; an administrator provisioned into the local `.runtime` database is not automatically copied there. Prepare a private JSON credential file with `name`, `email`, and a 12–128 character `password`, then run the compiled CLI against the container volume. The Render Secret Files and Shell workflow is documented in [deployment](deployment.md). In PowerShell:
 
 ```powershell
 $adminInputPath = (Resolve-Path .runtime/admin-input.json).Path

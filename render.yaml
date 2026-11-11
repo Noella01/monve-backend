@@ -1,0 +1,46 @@
+services:
+  - type: web
+    name: monve-backend
+    runtime: docker
+    plan: 0.5c-512mb
+    region: frankfurt
+    numInstances: 1
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    autoDeployTrigger: checksPass
+    healthCheckPath: /health/ready
+    disk:
+      name: monve-backend-data
+      mountPath: /data
+      sizeGB: 1
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: HOST
+        value: 0.0.0.0
+      # Keep PORT aligned with the Dockerfile health check on port 3000.
+      - key: PORT
+        value: 3000
+      - key: PUBLIC_URL
+        fromService:
+          type: web
+          name: monve-backend
+          envVarKey: RENDER_EXTERNAL_URL
+      - key: FRONTEND_ORIGINS
+        value: https://monve-dusky.vercel.app
+      - key: DATABASE_PATH
+        value: /data/aurie.sqlite
+      - key: UPLOAD_DIR
+        value: /data/uploads
+      - key: COOKIE_SECURE
+        value: "true"
+      - key: COOKIE_SAME_SITE
+        value: none
+      - key: PAYMENT_ENVIRONMENT
+        value: test
+      - key: PAYMENT_METHODS
+        value: ""
+      - key: PAYMENT_REDIRECT_URL
+        value: https://monve-dusky.vercel.app/account
+      - key: DOCS_ENABLED
+        value: "false"

@@ -1,7 +1,5 @@
 node_modules/
 dist/
-.env
-.env.*
 !.env.example
 !*.env.example
 .runtime/
@@ -11,3 +9,4 @@ coverage/
 backups/
 integration/lenos-v1/node_modules/
 integration/lenos-v1/frontend/dist/
+config.bat

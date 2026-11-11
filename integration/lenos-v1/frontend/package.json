@@ -3,8 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "npm --prefix .. run dev:frontend",
-    "build": "npm --prefix .. run build",
+    "dev": "node init && npm --prefix .. run dev:frontend",
+    "build": "node init && npm --prefix .. run build",
     "preview": "npm --prefix .. run preview"
   }
 }

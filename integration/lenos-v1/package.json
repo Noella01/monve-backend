@@ -5,10 +5,10 @@
   "type": "module",
   "scripts": {
     "test": "node --test tests/frontendServices.test.mjs",
-    "dev": "vite --config frontend/vite.config.ts",
-    "dev:frontend": "vite --config frontend/vite.config.ts",
-    "build": "vite build --config frontend/vite.config.ts",
-    "start": "vite --config frontend/vite.config.ts",
+    "dev": "node init && vite --config frontend/vite.config.ts",
+    "dev:frontend": "node init && vite --config frontend/vite.config.ts",
+    "build": "node init && vite build --config frontend/vite.config.ts",
+    "start": "node init && vite --config frontend/vite.config.ts",
     "preview": "vite preview --config frontend/vite.config.ts",
     "typecheck": "tsc --noEmit",
     "lint": "tsc --noEmit"
